@@ -331,11 +331,11 @@ def get_args():
             if num_auths > 1 and num_usernames != num_auths:
                 errors.append('The number of provided auth ({}) must match the username count ({})'.format(num_auths, num_usernames))
 
-        if args.captcha_key == None:
+        if args.captcha_key is None:
             val_chrome = chrome_verifier()
             if not val_chrome:
-                errors.append('You have to Install ChromeDriver in your Python Scripts Folder')        
-        
+                errors.append('You have to Install ChromeDriver in your Python Scripts Folder')
+
         if len(errors) > 0:
             parser.print_usage()
             print(sys.argv[0] + ": errors: \n - " + "\n - ".join(errors))
