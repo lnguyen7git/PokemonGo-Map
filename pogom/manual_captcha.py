@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 
 
 def captcha_verifier(captcha_url):
-    
+
     driver = webdriver.Chrome()
     driver.set_window_size(600, 600)
     driver.set_window_position(500, 300)
