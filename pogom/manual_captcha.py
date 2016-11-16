@@ -1,17 +1,14 @@
-import time
-import string
-import random
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import StaleElementReferenceException
+
 
 def captcha_verifier(captcha_url):
+    
     driver = webdriver.Chrome()
     driver.set_window_size(600, 600)
-    driver.set_window_position(500,300)
+    driver.set_window_position(500, 300)
     driver.get("https://pgorelease.nianticlabs.com/")
     driver.get(captcha_url)
     ex_script = '''window.globalVariable = "Fail";
