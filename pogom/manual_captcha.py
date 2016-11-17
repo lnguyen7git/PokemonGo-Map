@@ -28,9 +28,9 @@ document.getElementsByTagName('head')[0].appendChild(script2);
         WebDriverWait(driver, 30).until(EC.text_to_be_present_in_element_value((By.ID, "g-recaptcha-response"), ""))
     except:
         print('Timed Out')
-    linea = driver.execute_script("return globalVariable;")
+    captcha_token = driver.execute_script("return globalVariable;")
     driver.close()
-    return linea
+    return captcha_token
 
 
 def chrome_verifier():
