@@ -7,9 +7,9 @@ from selenium.webdriver.common.by import By
 
 log = logging.getLogger(__name__)
 
-def captcha_verifier(captcha_url,status):
+def captcha_verifier(captcha_url, status):
 
-    try:    
+    try:
         driver = webdriver.Chrome()
         driver.set_window_size(600, 600)
         driver.set_window_position(500, 300)
@@ -33,7 +33,7 @@ def captcha_verifier(captcha_url,status):
             captcha_token = driver.execute_script("return globalVariable;")
             driver.quit()
         except:
-            try:            
+            try:
                 driver.quit()
             except:
                 status['message'] = 'Unable to close Chromedriver'
@@ -44,14 +44,14 @@ def captcha_verifier(captcha_url,status):
 
         return captcha_token
     except:
-        try:            
+        try:
             driver.quit()
         except:
             status['message'] = 'Unable to close Chromedriver'
             log.warning(status['message'])
         status['message'] = 'ChromeDriver was Closed, Retrying...'
         log.warning(status['message'])
-        captcha_token = captcha_verifier(captcha_url,status)
+        captcha_token = captcha_verifier(captcha_url, status)
         return captcha_token
 
 
