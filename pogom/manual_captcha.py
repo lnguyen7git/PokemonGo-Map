@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 
 log = logging.getLogger(__name__)
 
+
 def captcha_verifier(captcha_url, status):
 
     try:
