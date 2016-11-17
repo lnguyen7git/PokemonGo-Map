@@ -38,7 +38,7 @@ from pgoapi.exceptions import AuthException
 from .models import parse_map, GymDetails, parse_gyms, MainWorker, WorkerStatus
 from .fakePogoApi import FakePogoApi
 from .utils import now
-from .manual_captcha import captcha_verifier
+from .manual_captcha import captcha_verifier, chrome_verifier
 import schedulers
 
 import terminalsize
@@ -447,20 +447,27 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 
                         if len(captcha_url) > 1:
                             if args.captcha_key is None:
-                                status['message'] = 'Account {} is encountering a captcha, starting response sequence'.format(account['username'])
-                                log.warning(status['message'])
-                                captcha_token = captcha_verifier(captcha_url)
-                                status['message'] = 'Retrieved captcha token, attempting to verify challenge for {}'.format(account['username'])
-                                log.info(status['message'])
-                                response = api.verify_challenge(token=captcha_token)
-                                if 'success' in response['responses']['VERIFY_CHALLENGE']:
-                                    status['message'] = "Account {} successfully uncaptcha'd".format(account['username'])
+                                val_chrome = chrome_verifier()
+                                if not val_chrome:
+                                    status['message'] = 'Account {} is encountering a captcha, But ChromeDriver is not Installed on your Python Scripts Folder'.format(account['username'])
                                     log.info(status['message'])
-                                else:
-                                    status['message'] = "Account {} failed verifyChallenge, putting away account for now".format(account['username'])
-                                    log.info(status['message'])
-                                    account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha failed to verify'})
+                                    account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'ChromeDriver Is not installed'})
                                     break
+                                else:
+                                    status['message'] = 'Account {} is encountering a captcha, starting response sequence'.format(account['username'])
+                                    log.warning(status['message'])
+                                    captcha_token = captcha_verifier(captcha_url)
+                                    status['message'] = 'Retrieved captcha token, attempting to verify challenge for {}'.format(account['username'])
+                                    log.info(status['message'])
+                                    response = api.verify_challenge(token=captcha_token)
+                                    if 'success' in response['responses']['VERIFY_CHALLENGE']:
+                                        status['message'] = "Account {} successfully uncaptcha'd".format(account['username'])
+                                        log.info(status['message'])
+                                    else:
+                                        status['message'] = "Account {} failed verifyChallenge, putting away account for now".format(account['username'])
+                                        log.info(status['message'])
+                                        account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha failed to verify'})
+                                        break
                                 time.sleep(1)
                             else:
                                 status['message'] = 'Account {} is encountering a captcha, starting 2captcha sequence'.format(account['username'])
