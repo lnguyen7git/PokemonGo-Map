@@ -11,7 +11,6 @@ import pprint
 import time
 
 from . import config
-from .manual_captcha import chrome_verifier
 
 log = logging.getLogger(__name__)
 
@@ -330,11 +329,6 @@ def get_args():
                 errors.append('The number of provided passwords ({}) must match the username count ({})'.format(num_passwords, num_usernames))
             if num_auths > 1 and num_usernames != num_auths:
                 errors.append('The number of provided auth ({}) must match the username count ({})'.format(num_auths, num_usernames))
-
-        if args.captcha_key is None:
-            val_chrome = chrome_verifier()
-            if not val_chrome:
-                errors.append('You have to Install ChromeDriver in your Python Scripts Folder')
 
         if len(errors) > 0:
             parser.print_usage()
