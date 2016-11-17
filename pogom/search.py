@@ -473,7 +473,7 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                             status['message'] = "Account {} failed verifyChallenge, putting away account for now".format(account['username'])
                                             log.info(status['message'])
                                             account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha failed to verify'})
-                                        break
+                                            break
                                 time.sleep(1)
                             else:
                                 status['message'] = 'Account {} is encountering a captcha, starting 2captcha sequence'.format(account['username'])
