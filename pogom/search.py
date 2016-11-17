@@ -450,40 +450,50 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                                 val_chrome = chrome_verifier()
                                 if not val_chrome:
                                     status['message'] = 'Account {} is encountering a captcha, But ChromeDriver is not Installed on your Python Scripts Folder'.format(account['username'])
-                                    log.info(status['message'])
+                                    log.warning(status['message'])
                                     account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'ChromeDriver Is not installed'})
                                     break
                                 else:
                                     status['message'] = 'Account {} is encountering a captcha, starting response sequence'.format(account['username'])
                                     log.warning(status['message'])
-                                    captcha_token = captcha_verifier(captcha_url)
+                                    captcha_token = captcha_verifier(captcha_url,status)
                                     status['message'] = 'Retrieved captcha token, attempting to verify challenge for {}'.format(account['username'])
                                     log.info(status['message'])
-                                    response = api.verify_challenge(token=captcha_token)
-                                    if 'success' in response['responses']['VERIFY_CHALLENGE']:
-                                        status['message'] = "Account {} successfully uncaptcha'd".format(account['username'])
-                                        log.info(status['message'])
-                                    else:
+                                    if captcha_token == 'Fail':
                                         status['message'] = "Account {} failed verifyChallenge, putting away account for now".format(account['username'])
                                         log.info(status['message'])
                                         account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha failed to verify'})
+                                        break
+                                    else:
+                                        response = api.verify_challenge(token=captcha_token)
+                                        if 'success' in response['responses']['VERIFY_CHALLENGE']:
+                                            status['message'] = "Account {} successfully uncaptcha'd".format(account['username'])
+                                            log.info(status['message'])
+                                        else:
+                                            status['message'] = "Account {} failed verifyChallenge, putting away account for now".format(account['username'])
+                                            log.info(status['message'])
+                                            account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha failed to verify'})
                                         break
                                 time.sleep(1)
                             else:
                                 status['message'] = 'Account {} is encountering a captcha, starting 2captcha sequence'.format(account['username'])
                                 log.warning(status['message'])
                                 captcha_token = token_request(args, status, captcha_url)
+    
                                 if 'ERROR' in captcha_token:
                                     log.warning("Unable to resolve captcha, please check your 2captcha API key and/or wallet balance")
                                     account_failures.append({'account': account, 'last_fail_time': now(), 'reason': 'catpcha failed to verify'})
                                     break
+    
                                 else:
                                     status['message'] = 'Retrieved captcha token, attempting to verify challenge for {}'.format(account['username'])
                                     log.info(status['message'])
                                     response = api.verify_challenge(token=captcha_token)
+    
                                     if 'success' in response['responses']['VERIFY_CHALLENGE']:
                                         status['message'] = "Account {} successfully uncaptcha'd".format(account['username'])
                                         log.info(status['message'])
+    
                                     else:
                                         status['message'] = "Account {} failed verifyChallenge, putting away account for now".format(account['username'])
                                         log.info(status['message'])
