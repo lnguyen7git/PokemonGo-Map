@@ -449,10 +449,10 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
                             if args.captcha_key is None:
                                 status['message'] = 'Account {} is encountering a captcha, starting response sequence'.format(account['username'])
                                 log.warning(status['message'])
-                                linea = captcha_verifier(captcha_url)
+                                captcha_token = captcha_verifier(captcha_url)
                                 status['message'] = 'Retrieved captcha token, attempting to verify challenge for {}'.format(account['username'])
                                 log.info(status['message'])
-                                response = api.verify_challenge(token=linea)
+                                response = api.verify_challenge(token=captcha_token)
                                 if 'success' in response['responses']['VERIFY_CHALLENGE']:
                                     status['message'] = "Account {} successfully uncaptcha'd".format(account['username'])
                                     log.info(status['message'])
