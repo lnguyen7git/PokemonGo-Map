@@ -546,10 +546,10 @@ def search_worker_thread(args, account_queue, account_failures, search_items_que
 
                 # Grab the next thing to search (when available).
                 status['message'] = 'Waiting for item from queue'
-                step, step_location, appears, leaves = search_items_queue.get()
+                step, next_location, appears, leaves = search_items_queue.get()
 
                 if not firstrun:  # no need to check distance upon login
-                    randomizer = random.uniform(0.7,1)
+                    randomizer = random.uniform(0.7, 1)
                     sdelay = vincenty(step_location, next_location).meters / ((args.speed_limit / 3.6) * randomizer)  # Classic basic physics formula: time = distance divided by velocity (in km/hr), plus a little randomness between 70 and 100% speed.
                     status['message'] += ', sleeping {}s until {}'.format(max(sdelay, args.scan_delay), time.strftime('%H:%M:%S', time.localtime(time.time() + max(sdelay, args.scan_delay))))
                     time.sleep(max(sdelay, args.scan_delay))  # lets sleep here for at least the scan delay time, or to keep us under the speed limiter, whichever is greatest.
