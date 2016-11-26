@@ -480,7 +480,7 @@ def _generate_locations(current_location, step_distance, step_limit, worker_coun
 
 
 def search_worker_thread(args, account_queue, account_failures, search_items_queue, pause_bit, status, dbq, whq):
-
+    step_location = []
     log.debug('Search worker thread starting')
 
     # The outer forever loop restarts only when the inner one is intentionally exited - which should only be done when the worker is failing too often, and probably banned.
